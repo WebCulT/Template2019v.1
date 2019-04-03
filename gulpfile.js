@@ -32,6 +32,7 @@ gulp.task('style', function() {
 
 gulp.task('js', function() {
 	return gulp.src([
+		'app/js/jQuery/jQuery.js'
 		'app/js/svg4everybody.min.js'
 		'app/js/common.js', //Always at the end.
 		])
