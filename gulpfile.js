@@ -11,8 +11,11 @@ var gulp = require('gulp'),
 		concat = require('gulp-concat'),
 		uglify = require('gulp-uglify'),
 		cmq	= require('gulp-merge-media-queries'),
+		del = require('del'),
 		server = require('browser-sync').create();
 
+
+var myBase = 'app/';
 
 gulp.task('style', function() {
 	return gulp.src('app/sass/**/*.scss')
@@ -33,8 +36,16 @@ gulp.task('style', function() {
 gulp.task('js', function() {
 	return gulp.src([
 		'app/js/jQuery/jQuery.js',
+		'app/js/modernizr/modernizr-custom.js',
 		'app/js/svg4everybody.min.js',
-		'app/js/common.js', //Always at the end.
+		'app/js/type/typed.min.js',
+		'app/js/mixitup/mixitup.min.js',
+		'app/js/common.js',
+		'app/js/pages/index.js',
+		'app/js/pages/page.js',
+		'app/js/pages/about.js',
+		'app/js/pages/services.js',
+		'app/js/pages/portfolio.js'
 		])
 	.pipe(concat('scripts.min.js'))
 	.pipe(uglify())
@@ -50,6 +61,7 @@ gulp.task('serve', function() {
 
 	gulp.watch('app/sass/**/*.scss', gulp.parallel('style'));
 	gulp.watch(['app/js/libs', 'app/js/common.js'], gulp.parallel('js'));
+	gulp.watch('app/js/pages/*.js', gulp.parallel('js'));
 	gulp.watch('app/*.html').on('change', server.reload);
 });
 
@@ -70,12 +82,37 @@ gulp.task('webp', function() {
 });
 
 gulp.task('sprite', function() {
-	return gulp.src('app/img/icon-*.svg')
+	return gulp.src('app/img/svg/icon-*.svg')
 		.pipe(svgstore({
 			inlineSvg: true
 		}))
 		.pipe(rename('sprite.svg'))
 		.pipe(gulp.dest('app/img'));
 });
+
+gulp.task('complete', function(done) {
+	var buildFiles = gulp.src([
+		myBase + '*.html'
+		]).pipe(gulp.dest('dist'));
+
+	var buildCss = gulp.src([
+		myBase + 'css/main.min.css',
+		])
+		.pipe(gulp.dest('dist/css'));
+
+	var buildJs = gulp.src([
+		myBase + 'js/scripts.min.js',
+		]).pipe(gulp.dest('dist/js'));
+
+	var buildFonts = gulp.src([
+		myBase + 'fonts/**/*',
+		]).pipe(gulp.dest('dist/fonts'));
+
+	done();
+});
+
+gulp.task('removedist', function(done) { done(); return del.sync('dist');});
+
+gulp.task('build', gulp.parallel('removedist', 'images', 'webp', 'style', 'js', 'complete'));
 
 gulp.task('default', gulp.parallel('style', 'js', 'serve'));
