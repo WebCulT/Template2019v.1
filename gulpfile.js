@@ -21,7 +21,7 @@ gulp.task('style', function() {
 	return gulp.src('app/sass/**/*.scss')
 	.pipe(sass().on('error', notify.onError()))
 	.pipe(postcss([
-		autoprefixer()
+		autoprefixer('last 15 versions')
 	]))
 	.pipe(cmq({
       log: true
@@ -36,16 +36,8 @@ gulp.task('style', function() {
 gulp.task('js', function() {
 	return gulp.src([
 		'app/js/jQuery/jQuery.js',
-		'app/js/modernizr/modernizr-custom.js',
 		'app/js/svg4everybody.min.js',
-		'app/js/type/typed.min.js',
-		'app/js/mixitup/mixitup.min.js',
-		'app/js/common.js',
-		'app/js/pages/index.js',
-		'app/js/pages/page.js',
-		'app/js/pages/about.js',
-		'app/js/pages/services.js',
-		'app/js/pages/portfolio.js'
+		'app/js/common.js'
 		])
 	.pipe(concat('scripts.min.js'))
 	.pipe(uglify())
